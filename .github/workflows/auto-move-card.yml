@@ -1,0 +1,46 @@
+name: Move Project Card on Issue Event
+
+on:
+  issues:
+    types: [labeled, reopened, closed]
+
+jobs:
+  move-card:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Move card based on issue event
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const projectName = "QA Tracker";
+            const columnMap = {
+              "TO DO": "open",
+              "IN PROGRESS": "labeled",
+              "DONE": "closed"
+            };
+
+            const { issue } = context.payload;
+            const columnName = Object.keys(columnMap).find(
+              key => columnMap[key] === context.payload.action || (key === "IN PROGRESS" && issue.assignee)
+            );
+
+            if (!columnName) return;
+
+            // Obtener proyecto y columna
+            const projects = await github.rest.projects.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            const project = projects.data.find(p => p.name === projectName);
+
+            const columns = await github.rest.projects.listColumns({
+              project_id: project.id
+            });
+            const column = columns.data.find(c => c.name === columnName);
+
+            // Mover tarjeta
+            await github.rest.projects.moveCard({
+              card_id: issue.project_card.id,
+              position: "top",
+              column_id: column.id
+            });
