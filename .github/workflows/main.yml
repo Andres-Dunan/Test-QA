@@ -11,7 +11,7 @@ jobs:
       - name: Add Issue to Project
         uses: actions/github-script@v6
         env:
-          PROJECT_ID: memex-root 
+          PROJECT_ID: 4 
           COLUMN_ID: Y3Vyc29yOnYyOpLOC82_JKdCYWNrbG9n   
         with:
           script: |
