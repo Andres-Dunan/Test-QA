@@ -1,0 +1,27 @@
+name: Auto-add Issues to Project
+
+on:
+  issues:
+    types: [opened, reopened]  # Se activa al crear o reabrir un Issue
+
+jobs:
+  add_to_project:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add Issue to Project
+        uses: actions/github-script@v6
+        env:
+          PROJECT_ID: 123456  # Reemplaza con el ID de tu proyecto
+          COLUMN_ID: 987654   # Reemplaza con el ID de la columna (ej: "To Do")
+          GITHUB_TOKEN: ${{ secrets.PAT }}  # Token con permisos
+        with:
+          script: |
+            const { github, context } = require('@actions/github');
+            const issueNumber = context.payload.issue.number;
+            
+            await github.rest.projects.createCard({
+              column_id: process.env.COLUMN_ID,
+              content_id: context.payload.issue.id,
+              content_type: 'Issue',
+            });
+            console.log(`Issue #${issueNumber} agregado al proyecto!`);
