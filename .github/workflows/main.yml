@@ -11,9 +11,8 @@ jobs:
       - name: Add Issue to Project
         uses: actions/github-script@v6
         env:
-          PROJECT_ID: 123456  # Reemplaza con el ID de tu proyecto
-          COLUMN_ID: 987654   # Reemplaza con el ID de la columna (ej: "To Do")
-          GITHUB_TOKEN: ${{ secrets.PAT }}  # Token con permisos
+          PROJECT_ID: memex-root 
+          COLUMN_ID: Y3Vyc29yOnYyOpLOC82_JKdCYWNrbG9n   
         with:
           script: |
             const { github, context } = require('@actions/github');
